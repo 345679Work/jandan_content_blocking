@@ -1,11 +1,11 @@
 # jandan_content_blocking
-煎蛋网 根据关键词屏蔽内容
+## 煎蛋网 根据关键词屏蔽内容
 
-将v_0_1的内容添加到油猴内，将需要屏蔽的关键词写入filter_list中，如
+将 *v_0_1* 的内容添加到油猴内，将需要屏蔽的关键词写入 *filter_list* 中，如
 
 ```javascript
-    const filter_list = [
-        "关键词1",
-        "关键词2",
-    ];
+const filter_list = [
+    "关键词1",
+    "关键词2",
+];
 ```
