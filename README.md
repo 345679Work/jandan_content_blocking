@@ -3,7 +3,7 @@
 
 将v_0_1的内容添加到油猴内，将需要屏蔽的关键词写入filter_list中，如
 
-```
+```javascript
     const filter_list = [
         "关键词1",
         "关键词2",
