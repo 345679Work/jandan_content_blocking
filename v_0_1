@@ -1,0 +1,69 @@
+// ==UserScript==
+// @name         煎蛋内容过滤器
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  自动隐藏包含关键字的评论，并适配页面无刷新跳转
+// @author       Gemini
+// @match        https://jandan.net/pic*
+// @match        https://jandan.net/ooxx*
+// @match        https://jandan.net/top*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    let lastFirstId = ""; // 记录上一个页面的第一个元素 ID
+
+    const filter_list = [
+        "要屏蔽的关键词填在这里",
+        "如果要屏蔽更多可以下加",
+    ];
+
+    // 功能 1：隐藏包含特定文本的元素
+    const hideFishElements = () => {
+        const rows = document.querySelectorAll(".comment-row.p-2");
+        rows.forEach(row => {
+            filter_list.forEach(filter_str => {
+                if (row.textContent.includes(filter_str)) {
+                    row.style.display = "none";
+                }
+            })
+        });
+        console.log("[Filter] 已扫描并处理隐藏逻辑");
+    };
+
+    // 获取当前页面第一个元素的 ID
+    const getFirstCommentId = () => {
+        const firstElement = document.querySelector(".comment-row.p-2 .comment-num");
+        return firstElement ? firstElement.textContent.trim() : null;
+    };
+
+    // 功能 2：监听逻辑
+    const startPolling = () => {
+        const timer = setInterval(() => {
+            const currentId = getFirstCommentId();
+
+            // 如果元素已出现，且 ID 与之前记录的不同，说明新页面内容已加载
+            if (currentId && currentId !== lastFirstId) {
+                console.log(`[Filter] 检测到新内容加载 (ID: ${currentId})，执行清理...`);
+
+                hideFishElements();      // 执行隐藏
+                lastFirstId = currentId; // 更新记录的 ID
+
+                clearInterval(timer);    // 停止本次轮询，等待下次 URL 变化
+            }
+        }, 50); // 每 0.05 秒检查一次
+    };
+
+    // 监听 URL Hash 变化
+    window.addEventListener('hashchange', () => {
+        console.log("[Filter] 检测到 URL 变化，开始轮询新元素...");
+        startPolling();
+    });
+
+    // 首次进入页面时启动
+    console.log("[Filter] 脚本启动，正在等待首屏元素...");
+    startPolling();
+
+})();
